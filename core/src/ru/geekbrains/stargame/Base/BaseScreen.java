@@ -1,5 +1,6 @@
 package ru.geekbrains.stargame.Base;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,6 +12,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public void show() {
         this.batch = new SpriteBatch();
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
@@ -90,6 +92,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         System.out.println("scrolled amount = " + amount);
+
         return false;
     }
 
