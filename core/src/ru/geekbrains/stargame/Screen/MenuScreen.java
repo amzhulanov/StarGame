@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.stargame.Base.BaseScreen;
 
 public class MenuScreen extends BaseScreen {
-    private Texture imgBackground;
+   // private Texture imgBackground;
     private Texture imgShuttle;
     private static float V_LEN = 0.5f;
 
@@ -21,15 +21,16 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
-        imgBackground = new Texture("space.jpg");
+     //   imgBackground = new Texture("space.jpg");
         imgShuttle = new Texture("shuttle.jpg");
         System.out.println(imgShuttle.getHeight());
         touch = new Vector2(); //вектор направления
         pos = new Vector2(); //вектор позиции
         speed = new Vector2();//вектор скорости
         buffer = new Vector2();//буферный вектор для контроля прохождения точки нажатия
-        System.out.println("Gdx.graphics.getWidth() = " + Gdx.graphics.getWidth());
-        System.out.println("Gdx.graphics.getHeight() = " + Gdx.graphics.getHeight());
+        batch.getProjectionMatrix().idt();
+       // System.out.println("Gdx.graphics.getWidth() = " + Gdx.graphics.getWidth());
+       // System.out.println("Gdx.graphics.getHeight() = " + Gdx.graphics.getHeight());
     }
 
     @Override
@@ -37,8 +38,8 @@ public class MenuScreen extends BaseScreen {
         Gdx.gl.glClearColor(1, 0.56f, 0.44f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(imgBackground, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch.draw(imgShuttle, pos.x, pos.y);
+      //  batch.draw(imgBackground, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(imgShuttle, -0.5f, -0.5f,1f,1f);
         batch.end();
         buffer.set(touch);
         if (buffer.sub(pos).len() > V_LEN) {
@@ -46,13 +47,13 @@ public class MenuScreen extends BaseScreen {
         } else {
             pos.set(touch);
         }
-        System.out.printf("touch.x=%f   touch.y=%f   pos.x=%f   pos.y=%f  speed.x=%f  speed.y=%f\n", touch.x, touch.y, pos.x, pos.y, speed.x, speed.y);
+       // System.out.printf("touch.x=%f   touch.y=%f   pos.x=%f   pos.y=%f  speed.x=%f  speed.y=%f\n", touch.x, touch.y, pos.x, pos.y, speed.x, speed.y);
     }
 
     @Override
     public void dispose() {
         imgShuttle.dispose();
-        imgBackground.dispose();
+       //imgBackground.dispose();
         super.dispose();
 
     }
