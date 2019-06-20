@@ -39,6 +39,7 @@ public class Rect {
 
     public float getBottom() {
         return pos.y - halfHeight;
+
     }
 
     public float getHalfWidth() {
