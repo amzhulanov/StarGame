@@ -20,7 +20,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     private Rect glBounds;
     protected Vector2 touch;
     protected Vector2 pos;
-    protected Vector2 v;
     protected static float V_LEN = 0.01f;
 
 
@@ -40,7 +39,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
 
         touch = new Vector2(); //вектор направления
-        v = new Vector2();//буферный вектор позиции
 
         worldToGl = new Matrix4();
         screenToWorld = new Matrix3();
@@ -48,9 +46,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
-
     }
-
 
     @Override
     public void resize(int width, int height) {
@@ -122,8 +118,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     }
 
     public boolean touchDown(Vector2 touch, int pointer) {
-        v.set(worldBounds.getLeft(), worldBounds.getBottom());////В Вектор "v" задаю местоположение картинки (вектор позиции), чтобы дальше рассчитать вектор скорости
-        speed.set(touch.cpy().sub(v)).setLength(V_LEN);//Создаю вектор скорости speed.
+        speed.set(touch.cpy().sub(shuttle.pos)).setLength(V_LEN);//Создаю вектор скорости speed.
         return false;
     }
 
@@ -149,9 +144,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     public boolean touchDragged(Vector2 touch, int pointer) {
         System.out.println("touchDragged touchX = " + touch.x + " touchY = " + touch.y);
-        worldBounds.setLeft(touch.x);
-        worldBounds.setBottom(touch.y);
-        shuttle.resize(worldBounds);
+        speed.set(touch.cpy().sub(shuttle.pos)).setLength(V_LEN);//Создаю вектор скорости speed.
         return false;
     }
 

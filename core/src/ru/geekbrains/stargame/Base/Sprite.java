@@ -12,9 +12,8 @@ public class Sprite extends Rect {
     protected int frame;
 
     public Sprite(TextureRegion region) {
-        regions = new TextureRegion[2];
+        regions = new TextureRegion[1];
         regions[0] = region;
-        regions[1] = region;
     }
 
     public void draw(SpriteBatch batch) {

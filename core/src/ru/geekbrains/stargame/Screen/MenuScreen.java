@@ -49,17 +49,16 @@ public class MenuScreen extends BaseScreen {
         batch.begin();
         background.draw(batch);
         shuttle.draw(batch);
-        shuttle.resize(worldBounds);
+        //shuttle.resize(worldBounds);
         batch.end();
 
-        v.set(worldBounds.getLeft(), worldBounds.getBottom());
+        //v.set(worldBounds.getLeft(), worldBounds.getBottom());
         buffer.set(touch);
-        if (buffer.sub(v).len() > V_LEN) {
-            worldBounds.setLeft(worldBounds.getLeft() + speed.x);
-            worldBounds.setBottom(worldBounds.getBottom() + speed.y);
+        if (buffer.sub(shuttle.pos).len() > V_LEN) {
+
+            shuttle.pos.add(speed);
         } else {
-            worldBounds.setLeft(touch.x);
-            worldBounds.setBottom(touch.y);
+            shuttle.pos.set(touch);
         }
     }
 
