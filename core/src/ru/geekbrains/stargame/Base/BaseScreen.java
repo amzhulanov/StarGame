@@ -117,16 +117,13 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touch.set(screenX, Gdx.graphics.getHeight() - screenY).mul(screenToWorld);//вектор touch принимает значение нашей координатной сетки, к которой мы пришли
-        touchDown(touch, pointer);
+        touchDown(touch, pointer);//метод touchDown рассчитывает вектор скорости для движения объекта в указанную точку
         return false;
     }
 
-    public boolean touchDown(Vector2 touch, int pointer) {//преобразовываю из скриновской в мировую систему координат
-        //System.out.println("touchDown touchX = " + touch.x + " touchY= " + touch.y);
-        //System.out.println("worldBounds worldBounds.getLeft = " + worldBounds.getLeft() + " worldBounds.getBottom= " + worldBounds.getBottom()+" worldBounds.getWidth="+worldBounds.getWidth());
-        v.set(worldBounds.getLeft(), worldBounds.getBottom());//вектор позиции
-        speed.set(touch.cpy().sub(v)).setLength(V_LEN);//скорость
-        //System.out.println("touchDown speedX = " + speed.x + " speedY= " + speed.y);
+    public boolean touchDown(Vector2 touch, int pointer) {
+        v.set(worldBounds.getLeft(), worldBounds.getBottom());////В Вектор "v" задаю местоположение картинки (вектор позиции), чтобы дальше рассчитать вектор скорости
+        speed.set(touch.cpy().sub(v)).setLength(V_LEN);//Создаю вектор скорости speed.
         return false;
     }
 
