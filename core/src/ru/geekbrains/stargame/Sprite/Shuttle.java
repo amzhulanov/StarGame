@@ -46,13 +46,7 @@ public class Shuttle extends Sprite {
         return false;
     }
 
-    @Override
-    public boolean touchDragged(Vector2 touch, int pointer) {
-        this.touch.set(touch);
-        speed=touch.cpy().sub(pos);
-        speed.setLength(V_LEN);
-        return false;
-    }
+
 
     @Override
     public void resize(Rect worldBounds) {

@@ -3,6 +3,7 @@ package ru.geekbrains.stargame.Base;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
@@ -14,11 +15,12 @@ import ru.geekbrains.stargame.math.Rect;
 
 public abstract class BaseScreen implements Screen, InputProcessor {
     protected SpriteBatch batch;
+
     private Rect screenBounds;
     private Rect worldBounds;
     private Rect glBounds;
+
     private Vector2 touch;
-    protected Vector2 pos;
 
 
 
@@ -42,6 +44,8 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(0.2f, 0.5f, 0.5f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
     @Override
@@ -109,7 +113,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touch.set(screenX, Gdx.graphics.getHeight() - screenY).mul(screenToWorld);//вектор touch принимает значение нашей координатной сетки, к которой мы пришли
-        //touchDown(touch, pointer);//метод touchDown рассчитывает вектор скорости для движения объекта в указанную точку
+       touchDown(touch, pointer);//метод touchDown рассчитывает вектор скорости для движения объекта в указанную точку
         return false;
     }
 
@@ -121,6 +125,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         //  System.out.println("touchUp screenX = " + screenX + " screenY = " + screenY);
+        touch.set(screenX, Gdx.graphics.getHeight() - screenY).mul(screenToWorld);
         touchUp(touch, pointer);
         return false;
     }
