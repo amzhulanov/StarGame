@@ -8,26 +8,22 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.geekbrains.stargame.Sprite.Shuttle;
 import ru.geekbrains.stargame.math.MatrixUtils;
 import ru.geekbrains.stargame.math.Rect;
 
 
 public abstract class BaseScreen implements Screen, InputProcessor {
     protected SpriteBatch batch;
-    protected Rect screenBounds;
-    protected Rect worldBounds;
+    private Rect screenBounds;
+    private Rect worldBounds;
     private Rect glBounds;
-    protected Vector2 touch;
+    private Vector2 touch;
     protected Vector2 pos;
-    protected static float V_LEN = 0.01f;
+
 
 
     private Matrix4 worldToGl; //используется в batch по умолчанию
     private Matrix3 screenToWorld;//используем для преобразования из скриновской в мировую систему координат
-
-    protected Vector2 speed;
-    public Shuttle shuttle;
 
     @Override
     public void show() {
@@ -113,12 +109,12 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touch.set(screenX, Gdx.graphics.getHeight() - screenY).mul(screenToWorld);//вектор touch принимает значение нашей координатной сетки, к которой мы пришли
-        touchDown(touch, pointer);//метод touchDown рассчитывает вектор скорости для движения объекта в указанную точку
+        //touchDown(touch, pointer);//метод touchDown рассчитывает вектор скорости для движения объекта в указанную точку
         return false;
     }
 
     public boolean touchDown(Vector2 touch, int pointer) {
-        speed.set(touch.cpy().sub(shuttle.pos)).setLength(V_LEN);//Создаю вектор скорости speed.
+        //speed.set(touch.cpy().sub(shuttle.pos)).setLength(V_LEN);//Создаю вектор скорости speed.
         return false;
     }
 
@@ -144,7 +140,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     public boolean touchDragged(Vector2 touch, int pointer) {
         System.out.println("touchDragged touchX = " + touch.x + " touchY = " + touch.y);
-        speed.set(touch.cpy().sub(shuttle.pos)).setLength(V_LEN);//Создаю вектор скорости speed.
+        //speed.set(touch.cpy().sub(shuttle.pos)).setLength(V_LEN);//Создаю вектор скорости speed.
         return false;
     }
 

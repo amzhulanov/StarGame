@@ -2,6 +2,7 @@ package ru.geekbrains.stargame.Base;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.stargame.math.Rect;
 
@@ -10,6 +11,7 @@ public class Sprite extends Rect {
     protected float scale = 1f;
     protected TextureRegion[] regions;
     protected int frame;
+    protected static float V_LEN = 0.01f;
 
     public Sprite(TextureRegion region) {
         regions = new TextureRegion[1];
@@ -37,7 +39,18 @@ public class Sprite extends Rect {
     public void resize(Rect worldBounds) {
 
     }
+    public void update(float delta){
 
+    }
+    public boolean touchDown(Vector2 touch, int pointer) {
+        return false;
+    }
+    public boolean touchUp(Vector2 touch, int pointer) {
+        return false;
+    }
+    public boolean touchDragged(Vector2 touch, int pointer) {
+        return false;
+    }
     public float getAngle() {
         return angle;
     }

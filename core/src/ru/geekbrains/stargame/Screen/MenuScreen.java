@@ -14,7 +14,7 @@ import ru.geekbrains.stargame.math.Rect;
 public class MenuScreen extends BaseScreen {
     private Texture imgBackground;
     private Texture imgShuttle;
-
+    private Shuttle shuttle;
 
     private Background background;
 
@@ -28,7 +28,6 @@ public class MenuScreen extends BaseScreen {
         imgShuttle = new Texture("badlogic.jpg");
 
         pos = new Vector2(); //вектор позиции
-        speed = new Vector2();//вектор скорости
 
         buffer = new Vector2();//буферный вектор для контроля прохождения точки нажатия
         background = new Background(new TextureRegion(imgBackground));
@@ -44,22 +43,30 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        super.render(delta);
+        update(delta);
+        draw();
+
+
+    }
+
+    public void update(float delta){
+        shuttle.update(delta);
+    }
+
+    public void draw(){
         Gdx.gl.glClearColor(1, 0.56f, 0.44f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
         shuttle.draw(batch);
-        //shuttle.resize(worldBounds);
         batch.end();
+    }
 
-        //v.set(worldBounds.getLeft(), worldBounds.getBottom());
-        buffer.set(touch);
-        if (buffer.sub(shuttle.pos).len() > V_LEN) {
-
-            shuttle.pos.add(speed);
-        } else {
-            shuttle.pos.set(touch);
-        }
+    @Override
+    public boolean touchDown(Vector2 touch, int pointer) {
+        shuttle.touchDown(touch,pointer);
+        return false;
     }
 
     @Override
