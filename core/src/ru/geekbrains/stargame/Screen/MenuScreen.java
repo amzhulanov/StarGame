@@ -5,12 +5,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 import ru.geekbrains.stargame.Base.BaseScreen;
 import ru.geekbrains.stargame.Sprite.Background;
 import ru.geekbrains.stargame.Sprite.ButtonExit;
 import ru.geekbrains.stargame.Sprite.ButtonPlay;
-import ru.geekbrains.stargame.Sprite.Star;
+import ru.geekbrains.stargame.Sprite.SpaceGarbage.Star;
+import ru.geekbrains.stargame.Sprite.SpaceGarbage.StarEmitter;
 import ru.geekbrains.stargame.math.Rect;
 
 public class MenuScreen extends BaseScreen {
@@ -23,24 +25,24 @@ public class MenuScreen extends BaseScreen {
     private ButtonExit buttonExit;
     private ButtonPlay buttonPlay;
 
-    private Star star;
+
+    private Array<Star> stars = new Array<Star>();
 
     public MenuScreen(Game game) {
         this.game = game;
     }
 
-
     @Override
     public void show() {
         super.show();
-        imgBackground = new Texture("textures/bg.png");
+        imgBackground = new Texture("textures/background/bg.png");
         background = new Background(new TextureRegion(imgBackground));
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, game);
-        star = new Star(atlas);
-
+        StarEmitter.initialize();
     }
+
 
     @Override
     public void resize(Rect worldBounds) {
@@ -48,26 +50,35 @@ public class MenuScreen extends BaseScreen {
         background.resize(worldBounds);
         buttonExit.resize(worldBounds);
         buttonPlay.resize(worldBounds);
-        star.resize(worldBounds);
+        for (Star star : stars) {
+            star.resize(worldBounds);
+        }
     }
 
     @Override
     public void render(float delta) {
+        StarEmitter.run(stars,worldBounds);
         super.render(delta);
         update(delta);
         draw();
 
-
     }
 
-    public void update(float delta) {
-        star.update(delta);
+    private void update(float delta) {
+        for (int i=stars.size;--i>=0;) {
+            stars.get(i).update(delta);
+            if (!stars.get(i).isActive){
+                StarEmitter.clean(stars,i);
+            }
+        }
     }
 
-    public void draw() {
+    private void draw() {
         batch.begin();
         background.draw(batch);
-        star.draw(batch);
+        for (Star star : stars) {
+            star.draw(batch);
+        }
         buttonExit.draw(batch);
         buttonPlay.draw(batch);
         batch.end();
