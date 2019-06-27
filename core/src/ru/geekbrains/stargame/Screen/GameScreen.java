@@ -1,123 +1,119 @@
-package ru.geekbrains.stargame.Screen;
+package ru.geekbrains.stargame.screen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
-import ru.geekbrains.stargame.Base.BaseScreen;
-import ru.geekbrains.stargame.Sprite.Background;
-import ru.geekbrains.stargame.Sprite.Shuttle;
-import ru.geekbrains.stargame.Sprite.SpaceGarbage.Asteroid;
-import ru.geekbrains.stargame.Sprite.SpaceGarbage.AsteroidEmitter;
-import ru.geekbrains.stargame.Sprite.SpaceGarbage.Meteor;
+import ru.geekbrains.stargame.base.BaseScreen;
 import ru.geekbrains.stargame.math.Rect;
+import ru.geekbrains.stargame.pool.BulletPool;
+import ru.geekbrains.stargame.sprite.Background;
+import ru.geekbrains.stargame.sprite.MainShip;
+import ru.geekbrains.stargame.sprite.Star;
 
 public class GameScreen extends BaseScreen {
 
+    private static final int STAR_COUNT = 64;
+
+    private Texture bg;
     private Background background;
-    private Texture imgBackground;
-    private Meteor meteor;
-    private Shuttle shuttle;
-
     private TextureAtlas atlas;
-    private TextureAtlas atlasShip;
 
-    private Array<Asteroid> asteroids = new Array<Asteroid>();
+    private Star[] starArray;
+
+    private BulletPool bulletPool;
+
+    private MainShip mainShip;
+
+
 
     @Override
     public void show() {
         super.show();
-        imgBackground = new Texture("textures/background/space.jpg");
-        background = new Background(new TextureRegion(imgBackground));
-        atlas = new TextureAtlas("textures/SpaceGarbage/pictures/spacegarbage.pack");
-        atlasShip = new TextureAtlas("textures/mainAtlas.tpack");
-        meteor=new Meteor(atlas);
-        shuttle=new Shuttle(atlasShip);
-        AsteroidEmitter.initialize();
+        bg = new Texture("textures/bg.png");
+        background = new Background(new TextureRegion(bg));
+        atlas = new TextureAtlas("textures/mainAtlas.tpack");
+        starArray = new Star[STAR_COUNT];
+        for (int i = 0; i < starArray.length; i++) {
+            starArray[i] = new Star(atlas);
+        }
+        bulletPool = new BulletPool();
+        mainShip = new MainShip(atlas, bulletPool);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        AsteroidEmitter.run(asteroids,worldBounds);
         update(delta);
-        shuttle.updateShuttle(0);
+        freeAllDestroyedSprites();
         draw();
     }
 
-    private void update(float delta) {
-        meteor.update(delta);
-        for (int i=asteroids.size;--i>=0;) {
-            asteroids.get(i).update(delta);
-            if (!asteroids.get(i).isActive){
-                AsteroidEmitter.clean(asteroids,i);
-            }
+    public void update(float delta) {
+        for (Star star : starArray) {
+            star.update(delta);
         }
+        mainShip.update(delta);
+        bulletPool.updateActiveSprites(delta);
     }
 
+    public void freeAllDestroyedSprites() {
+        bulletPool.freeAllDestroyedActiveSprites();
+    }
 
-    private void draw() {
+    public void draw() {
         batch.begin();
         background.draw(batch);
-        meteor.draw(batch);
-        for (Asteroid asteroid : asteroids) {
-            asteroid.draw(batch);
+        for (Star star : starArray) {
+            star.draw(batch);
         }
-        shuttle.draw(batch);
+        mainShip.draw(batch);
+        bulletPool.drawActiveSprites(batch);
         batch.end();
     }
+
     @Override
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
         background.resize(worldBounds);
-        meteor.resize(worldBounds);
-        for (Asteroid asteroid : asteroids) {
-            asteroid.resize(worldBounds);
+        for (Star star : starArray) {
+            star.resize(worldBounds);
         }
-        shuttle.resize(worldBounds);
+        mainShip.resize(worldBounds);
     }
 
     @Override
     public void dispose() {
-        super.dispose();
-        imgBackground.dispose();
+        bg.dispose();
         atlas.dispose();
-        atlasShip.dispose();
+        bulletPool.dispose();
+        super.dispose();
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        switch (keycode) {
-           /* case (19): //вверх
-                touch.y++;
-                break;
-            case (20)://вниз
-                touch.y--;
-                break;*/
-            case (21)://влево
-                shuttle.updateShuttle(-1);
-                break;
-            case (22)://вправо
-                shuttle.updateShuttle(1);
-                break;
-        }
+        mainShip.keyDown(keycode);
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        mainShip.keyUp(keycode);
         return false;
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        return super.touchDown(touch, pointer);
+        mainShip.touchDown(touch, pointer);
+        return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
-        return super.touchUp(touch, pointer);
+        mainShip.touchUp(touch, pointer);
+        return false;
     }
 }

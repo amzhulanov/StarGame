@@ -1,32 +1,34 @@
-package ru.geekbrains.stargame.Screen;
+package ru.geekbrains.stargame.screen;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
-import ru.geekbrains.stargame.Base.BaseScreen;
-import ru.geekbrains.stargame.Sprite.Background;
-import ru.geekbrains.stargame.Sprite.ButtonExit;
-import ru.geekbrains.stargame.Sprite.ButtonPlay;
-import ru.geekbrains.stargame.Sprite.SpaceGarbage.Star;
-import ru.geekbrains.stargame.Sprite.SpaceGarbage.StarEmitter;
+import ru.geekbrains.stargame.base.BaseScreen;
 import ru.geekbrains.stargame.math.Rect;
+import ru.geekbrains.stargame.sprite.Background;
+import ru.geekbrains.stargame.sprite.ButtonExit;
+import ru.geekbrains.stargame.sprite.ButtonPlay;
+import ru.geekbrains.stargame.sprite.Star;
 
 public class MenuScreen extends BaseScreen {
 
+    private static final int STAR_COUNT = 256;
+
     private Game game;
-    private Texture imgBackground;
+
+    private Texture bg;
     private Background background;
     private TextureAtlas atlas;
 
     private ButtonExit buttonExit;
     private ButtonPlay buttonPlay;
 
-
-    private Array<Star> stars = new Array<Star>();
+    private Star[] starArray;
 
     public MenuScreen(Game game) {
         this.game = game;
@@ -35,14 +37,16 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
-        imgBackground = new Texture("textures/background/bg.png");
-        background = new Background(new TextureRegion(imgBackground));
+        bg = new Texture("textures/bg.png");
+        background = new Background(new TextureRegion(bg));
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, game);
-        StarEmitter.initialize();
+        starArray = new Star[STAR_COUNT];
+        for (int i = 0; i < starArray.length; i++) {
+            starArray[i] = new Star(atlas);
+        }
     }
-
 
     @Override
     public void resize(Rect worldBounds) {
@@ -50,33 +54,28 @@ public class MenuScreen extends BaseScreen {
         background.resize(worldBounds);
         buttonExit.resize(worldBounds);
         buttonPlay.resize(worldBounds);
-        for (Star star : stars) {
+        for (Star star : starArray) {
             star.resize(worldBounds);
         }
     }
 
     @Override
     public void render(float delta) {
-        StarEmitter.run(stars,worldBounds);
         super.render(delta);
         update(delta);
         draw();
-
     }
 
-    private void update(float delta) {
-        for (int i=stars.size;--i>=0;) {
-            stars.get(i).update(delta);
-            if (!stars.get(i).isActive){
-                StarEmitter.clean(stars,i);
-            }
+    public void update(float delta) {
+        for (Star star : starArray) {
+            star.update(delta);
         }
     }
 
-    private void draw() {
+    public void draw() {
         batch.begin();
         background.draw(batch);
-        for (Star star : stars) {
+        for (Star star : starArray) {
             star.draw(batch);
         }
         buttonExit.draw(batch);
@@ -84,13 +83,11 @@ public class MenuScreen extends BaseScreen {
         batch.end();
     }
 
-
     @Override
     public void dispose() {
-        imgBackground.dispose();
+        bg.dispose();
         atlas.dispose();
         super.dispose();
-
     }
 
     @Override
@@ -107,4 +104,3 @@ public class MenuScreen extends BaseScreen {
         return false;
     }
 }
-
