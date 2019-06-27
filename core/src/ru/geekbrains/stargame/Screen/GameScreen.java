@@ -11,6 +11,7 @@ import ru.geekbrains.stargame.base.BaseScreen;
 import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.pool.BulletPool;
 import ru.geekbrains.stargame.sprite.Background;
+import ru.geekbrains.stargame.sprite.EnemyShip;
 import ru.geekbrains.stargame.sprite.MainShip;
 import ru.geekbrains.stargame.sprite.Star;
 
@@ -27,10 +28,7 @@ public class GameScreen extends BaseScreen {
     private BulletPool bulletPool;
 
     private MainShip mainShip;
-
-
-
-
+    private EnemyShip enemyShip;
 
     @Override
     public void show() {
@@ -44,7 +42,8 @@ public class GameScreen extends BaseScreen {
         }
         bulletPool = new BulletPool();
         mainShip = new MainShip(atlas, bulletPool);
-        music= Gdx.audio.newSound(Gdx.files.internal("sounds/music.mp3"));
+        enemyShip=new EnemyShip(atlas,bulletPool);
+        music= Gdx.audio.newSound(Gdx.files.internal("sounds/GameScreen.mp3"));
         music.play(0.7f);
 
     }
@@ -62,6 +61,7 @@ public class GameScreen extends BaseScreen {
             star.update(delta);
         }
         mainShip.update(delta);
+        enemyShip.update(delta);
         bulletPool.updateActiveSprites(delta);
     }
 
@@ -76,6 +76,7 @@ public class GameScreen extends BaseScreen {
             star.draw(batch);
         }
         mainShip.draw(batch);
+        enemyShip.draw(batch);
         bulletPool.drawActiveSprites(batch);
         batch.end();
     }
@@ -88,6 +89,7 @@ public class GameScreen extends BaseScreen {
             star.resize(worldBounds);
         }
         mainShip.resize(worldBounds);
+        enemyShip.resize(worldBounds);
     }
 
     @Override

@@ -30,6 +30,7 @@ public class MenuScreen extends BaseScreen {
 
     private Star[] starArray;
 
+
     public MenuScreen(Game game) {
         this.game = game;
     }
@@ -43,6 +44,9 @@ public class MenuScreen extends BaseScreen {
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, game);
         starArray = new Star[STAR_COUNT];
+        music= Gdx.audio.newSound(Gdx.files.internal("sounds/MainScreen.mp3"));
+        music.play(0.7f);
+
         for (int i = 0; i < starArray.length; i++) {
             starArray[i] = new Star(atlas);
         }
