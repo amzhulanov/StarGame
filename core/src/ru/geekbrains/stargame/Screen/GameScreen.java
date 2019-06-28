@@ -1,7 +1,6 @@
 package ru.geekbrains.stargame.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -43,8 +42,7 @@ public class GameScreen extends BaseScreen {
         bulletPool = new BulletPool();
         mainShip = new MainShip(atlas, bulletPool);
         enemyShip=new EnemyShip(atlas,bulletPool);
-        music= Gdx.audio.newSound(Gdx.files.internal("sounds/GameScreen.mp3"));
-        music.play(0.7f);
+        musicOn("sounds/GameScreen.mp3",0.7f,true);
 
     }
 

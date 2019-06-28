@@ -3,6 +3,7 @@ package ru.geekbrains.stargame.base;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -25,7 +26,8 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     private Vector2 touch;
 
-    protected Sound music;
+    protected Sound sound;
+    public Music music;
 
     @Override
     public void show() {
@@ -154,5 +156,11 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     public boolean scrolled(int amount) {
         System.out.println("scrolled amount = " + amount);
         return false;
+    }
+    protected void musicOn(String path, Float volume, Boolean loop){
+        music = Gdx.audio.newMusic(Gdx.files.internal(path));
+        music.setVolume(volume);
+        music.setLooping(loop);
+        music.play();
     }
 }
