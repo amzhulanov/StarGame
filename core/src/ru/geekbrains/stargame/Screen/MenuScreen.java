@@ -1,7 +1,6 @@
 package ru.geekbrains.stargame.screen;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -43,7 +42,7 @@ public class MenuScreen extends BaseScreen {
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, game);
         starArray = new Star[STAR_COUNT];
-        musicOn("sounds/MainScreen.mp3",0.7f,true);
+        musicOn("sounds/MainScreen.mp3", 0.7f, true);
 
         for (int i = 0; i < starArray.length; i++) {
             starArray[i] = new Star(atlas);

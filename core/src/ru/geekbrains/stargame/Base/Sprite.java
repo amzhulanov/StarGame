@@ -16,7 +16,7 @@ public class Sprite extends Rect {
     protected TextureRegion[] regions;
     protected int frame;
     protected boolean destroyed;
-    protected Sound soundBullet= Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
+
 
     public Sprite(TextureRegion region) {
         regions = new TextureRegion[1];

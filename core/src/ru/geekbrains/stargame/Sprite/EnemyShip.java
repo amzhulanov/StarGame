@@ -1,60 +1,58 @@
 package ru.geekbrains.stargame.sprite;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.geekbrains.stargame.base.Sprite;
 import ru.geekbrains.stargame.math.Rect;
-import ru.geekbrains.stargame.math.Rnd;
 import ru.geekbrains.stargame.pool.BulletPool;
 
-public class EnemyShip extends Sprite {
+public class EnemyShip extends Ship {
 
-    private Rect worldBounds;
-    private BulletPool bulletPool;
-    private TextureAtlas atlas;
-
-    private final Vector2 v0 = new Vector2(0.5f, 0f);//статичная скорость
-    private Vector2 v = new Vector2();
-
-
-    public EnemyShip(TextureAtlas atlas, BulletPool bulletPool) {
-        super(atlas.findRegion("enemy0"), 1, 2, 2);
-        this.atlas = atlas;
-        v.set(0.05f,0);
-        //this.bulletPool = bulletPool;
-        setHeightProportion(0.15f);
-    }
-
-    @Override
-    public void resize(Rect worldBounds) {
-        this.worldBounds = worldBounds;
-        setTop(worldBounds.getTop()-0.05f);
+    public EnemyShip(BulletPool bulletPool, Sound shootSound, Rect worldbounds) {
+        this.bulletPool = bulletPool;
+        this.shootSound = shootSound;
+        this.worldBounds = worldbounds;
+        this.v = new Vector2();
+        this.v0 = new Vector2();
+        this.bulletV = new Vector2();
     }
 
     @Override
     public void update(float delta) {
-
-        //if (getRight()>worldBounds.getHalfWidth())
-        //pos.mulAdd(v, delta);
-        if (getRight() < worldBounds.getRight() &&v.x>0) {
-            this.pos.add(v);
-            return;
-        }
-        if (getRight()>= worldBounds.getRight() &&v.x>0) {
-            setRight(worldBounds.getRight());
-            v.set(Rnd.nextFloat(-0.001f, -0.008f),0);
-            this.pos.add(v);
-            return;
-        }
-        if (getLeft() > worldBounds.getLeft() &&v.x<0) {
-            pos.add(v);
-        }
-        if (getLeft()<= worldBounds.getLeft() &&v.x<0) {
-            setLeft(worldBounds.getLeft());
-            v.set(Rnd.nextFloat(0.001f, 0.008f),0);
-            pos.add(v);
+        super.update(delta);
+        if (getBottom() < worldBounds.getBottom()) {
+            destroy();
 
         }
+
     }
+
+    public void set(
+            TextureRegion[] regions,//две текстуры для двух разных состояний
+            Vector2 v0,
+            TextureRegion bulletRegion,
+            float bulletHigh,
+            float bulletVY,
+            int damage,
+            float reloadInterval,
+            int hp,
+            float height
+
+    ) {
+        this.regions = regions;//вид корабля
+        this.v0.set(v0);//начальная скорость корабля
+        this.bulletRegion = bulletRegion;//вид пули
+        this.bulletHigh = bulletHigh;//размер пули
+        this.bulletV.set(0, bulletVY);//скорость пули
+        this.damage = damage;//сила повреждения
+        this.reloadInterval = reloadInterval;//интервал перезагрузки
+        this.hp = hp;//кол-во жизней
+        setHeightProportion(height);
+        v.set(v0);
+
+
+    }
+
+
 }
