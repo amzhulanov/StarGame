@@ -12,6 +12,7 @@ import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.pool.BulletPool;
 import ru.geekbrains.stargame.pool.EnemyPool;
 import ru.geekbrains.stargame.sprite.Background;
+import ru.geekbrains.stargame.sprite.EnemyShip;
 import ru.geekbrains.stargame.sprite.MainShip;
 import ru.geekbrains.stargame.sprite.Star;
 import ru.geekbrains.stargame.utils.EnemyGenerator;
@@ -60,6 +61,7 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        collisionShip();
         super.render(delta);
         update(delta);
         freeAllDestroyedSprites();
@@ -74,6 +76,14 @@ public class GameScreen extends BaseScreen {
         bulletPool.updateActiveSprites(delta);
         enemyPool.updateActiveSprites(delta);
         enemyGenerator.generate(delta);
+    }
+
+    public void collisionShip() {
+        for (EnemyShip next : enemyPool.getActiveObjects()) {
+            if (!mainShip.isOutside(next)) {//произошло столкновение с вражеским кораблем
+                next.destroy();//корабль уничтожается
+            }
+        }
     }
 
     public void freeAllDestroyedSprites() {
