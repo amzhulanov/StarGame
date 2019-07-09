@@ -13,7 +13,7 @@ public class ButtonNewGame extends ScaledTouchUpButton {
         super(atlas.findRegion("button_new_game"));
         this.gameScreen=gameScreen;
         setHeightProportion(0.05f);
-        setBottom(-0.02f);
+        setBottom(-0.05f);
     }
 
     @Override
