@@ -1,6 +1,5 @@
 package ru.geekbrains.stargame.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -49,9 +48,6 @@ public class GameScreen extends BaseScreen {
     private GameOver gameOver;
 
     private ButtonNewGame buttonNewGame;
-    private Game game;
-    private GameScreen gameScreen;
-
 
     @Override
     public void show() {
@@ -77,7 +73,7 @@ public class GameScreen extends BaseScreen {
 
         gameOver=new GameOver(atlas);
 
-        buttonNewGame = new ButtonNewGame(atlas,mainShip,bulletPool,enemyPool,explosionPool);
+        buttonNewGame = new ButtonNewGame(atlas,this);
     }
 
     @Override
@@ -234,5 +230,11 @@ public class GameScreen extends BaseScreen {
         }
         return false;
     }
+    public void startNewGame(){
+        mainShip.setToNewGame(worldBounds);
 
+        bulletPool.freeAllActiveSprites();
+        enemyPool.freeAllActiveSprites();
+        explosionPool.freeAllActiveSprites();
+    }
 }
