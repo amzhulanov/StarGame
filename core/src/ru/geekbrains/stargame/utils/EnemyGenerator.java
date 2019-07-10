@@ -17,6 +17,7 @@ public class EnemyGenerator {
     private static final int ENEMY_SMALL_DAMAGE = 1;
     private static final float ENEMY_SMALL_RELOAD_INTERVAL = 3f;
     private static final int ENEMY_SMALL_HP = 1;
+    private static final int ENEMY_SMALL_SCORE = 1;
 
     private static final float ENEMY_MIDDLE_HEIGHT = 0.1f;
     private static final float ENEMY_MIDDLE_BULLET_HEIGHT = 0.02f;
@@ -24,6 +25,7 @@ public class EnemyGenerator {
     private static final int ENEMY_MIDDLE_DAMAGE = 5;
     private static final float ENEMY_MIDDLE_RELOAD_INTERVAL = 4f;
     private static final int ENEMY_MIDDLE_HP = 5;
+    private static final int ENEMY_MIDDLE_SCORE = 3;
 
 
     private static final float ENEMY_BIG_HEIGHT = 0.2f;
@@ -32,7 +34,7 @@ public class EnemyGenerator {
     private static final int ENEMY_BIG_DAMAGE = 10;
     private static final float ENEMY_BIG_RELOAD_INTERVAL = 1f;
     private static final int ENEMY_BIG_HP = 10;
-
+    private static final int ENEMY_BIG_SCORE = 5;
 
 
     private TextureRegion[] enemySmallRegion;
@@ -52,66 +54,139 @@ public class EnemyGenerator {
     private Rect worldBounds;
     public int level;
 
-    public EnemyGenerator(TextureAtlas atlas, EnemyPool enemyPool,Rect worldBounds) {
+
+    public EnemyGenerator(TextureAtlas atlas, EnemyPool enemyPool, Rect worldBounds) {
         this.enemyPool = enemyPool;
         this.enemySmallV = new Vector2(0f, -0.2f);
         this.enemyMiddleV = new Vector2(0f, -0.03f);
         this.enemyBigV = new Vector2(0f, -0.05f);
-        this.worldBounds=worldBounds;
-        TextureRegion region0 = atlas.findRegion("enemy0");
-        enemySmallRegion = Regions.split(region0, 1, 2, 2);//текстура для корабля
-        TextureRegion region1 = atlas.findRegion("enemy1");
-        enemyMiddleRegion = Regions.split(region1, 1, 2, 2);//текстура для корабля
-        TextureRegion region2 = atlas.findRegion("enemy2");
-        enemyBigRegion = Regions.split(region2, 1, 2, 2);//текстура для корабля
+        this.worldBounds = worldBounds;
+        TextureRegion region2;
+        switch (getLevel()) {
+            case (2):
+                region2 = atlas.findRegion("shipLevel2");
+                enemyBigRegion = Regions.split(region2, 1, 2, 2);//текстура для корабля
+                break;
+            case (3):
+                region2 = atlas.findRegion("shipLevel2");
+                enemyBigRegion = Regions.split(region2, 1, 2, 2);//текстура для корабля
+                break;
+            default:
+                TextureRegion region0 = atlas.findRegion("enemy0");
+                enemySmallRegion = Regions.split(region0, 1, 2, 2);//текстура для корабля
+                TextureRegion region1 = atlas.findRegion("enemy1");
+                enemyMiddleRegion = Regions.split(region1, 1, 2, 2);//текстура для корабля
+                region2 = atlas.findRegion("enemy2");
+                enemyBigRegion = Regions.split(region2, 1, 2, 2);//текстура для корабля
+                break;
+        }
+
 
         bulletRegion = atlas.findRegion("bulletEnemy");
     }
 
-    public void generate(float delta,int frags) {
-        level=frags/10+1;
+    public void generate(float delta, int frags) {
+        level = frags / 10 + 1;
         generateTimer += delta;
+
         if (generateTimer > generateInterval) {
             generateTimer = 0f;
             EnemyShip enemyShip = enemyPool.obtain();
-            float type=(float)Math.random();
-            if (type<0.5f){
-                enemyShip.set(
-                        enemySmallRegion,
-                        enemySmallV,
-                        bulletRegion,
-                        ENEMY_SMALL_BULLET_HEIGHT,
-                        ENEMY_SMALL_BULLET_VY,
-                        ENEMY_SMALL_DAMAGE*level,
-                        ENEMY_SMALL_RELOAD_INTERVAL,
-                        ENEMY_SMALL_HP,
-                        ENEMY_SMALL_HEIGHT
+            float type = (float) Math.random();
 
-                );
-            }else if (type<0.8f){
-                enemyShip.set(
-                        enemyMiddleRegion,
-                        enemyMiddleV,
-                        bulletRegion,
-                        ENEMY_MIDDLE_BULLET_HEIGHT,
-                        ENEMY_MIDDLE_BULLET_VY,
-                        ENEMY_MIDDLE_DAMAGE*level,
-                        ENEMY_MIDDLE_RELOAD_INTERVAL,
-                        ENEMY_MIDDLE_HP,
-                        ENEMY_MIDDLE_HEIGHT);
-            }else{
-                enemyShip.set(
-                        enemyBigRegion,
-                        enemyBigV,
-                        bulletRegion,
-                        ENEMY_BIG_BULLET_HEIGHT,
-                        ENEMY_BIG_BULLET_VY,
-                        ENEMY_BIG_DAMAGE*level,
-                        ENEMY_BIG_RELOAD_INTERVAL,
-                        ENEMY_BIG_HP,
-                        ENEMY_BIG_HEIGHT) ;
+            switch (level) {
+                case (2):
+                    enemyShip.set(
+                            enemyBigRegion,
+                            enemyBigV,
+                            bulletRegion,
+                            ENEMY_BIG_BULLET_HEIGHT,
+                            ENEMY_BIG_BULLET_VY,
+                            ENEMY_BIG_DAMAGE * level,
+                            ENEMY_BIG_RELOAD_INTERVAL / 2,
+                            ENEMY_BIG_HP * 2,
+                            ENEMY_BIG_HEIGHT * 2,
+                            true,
+                            ENEMY_BIG_SCORE);
+                    break;
+                case (3):
+                    if (type <= 0.5f) {
+                        enemyShip.set(
+                                enemyMiddleRegion,
+                                enemyMiddleV,
+                                bulletRegion,
+                                ENEMY_MIDDLE_BULLET_HEIGHT,
+                                ENEMY_MIDDLE_BULLET_VY,
+                                ENEMY_MIDDLE_DAMAGE * level,
+                                ENEMY_MIDDLE_RELOAD_INTERVAL,
+                                ENEMY_MIDDLE_HP,
+                                ENEMY_MIDDLE_HEIGHT,
+                                false,
+                                ENEMY_MIDDLE_SCORE);
+                    } else {
+                        enemyShip.set(
+                                enemyBigRegion,
+                                enemyBigV,
+                                bulletRegion,
+                                ENEMY_BIG_BULLET_HEIGHT,
+                                ENEMY_BIG_BULLET_VY,
+                                ENEMY_BIG_DAMAGE * level,
+                                ENEMY_BIG_RELOAD_INTERVAL,
+                                ENEMY_BIG_HP,
+                                ENEMY_BIG_HEIGHT,
+                                true,
+                                ENEMY_BIG_SCORE
+                        );
+                    }
+                    break;
+                default:
+
+                    if (type < 0.5f) {
+                        enemyShip.set(
+                                enemySmallRegion,
+                                enemySmallV,
+                                bulletRegion,
+                                ENEMY_SMALL_BULLET_HEIGHT,
+                                ENEMY_SMALL_BULLET_VY,
+                                ENEMY_SMALL_DAMAGE * level,
+                                ENEMY_SMALL_RELOAD_INTERVAL,
+                                ENEMY_SMALL_HP,
+                                ENEMY_SMALL_HEIGHT,
+                                false,
+                                ENEMY_SMALL_SCORE
+
+                        );
+                    } else if (type < 0.8f) {
+                        enemyShip.set(
+                                enemyMiddleRegion,
+                                enemyMiddleV,
+                                bulletRegion,
+                                ENEMY_MIDDLE_BULLET_HEIGHT,
+                                ENEMY_MIDDLE_BULLET_VY,
+                                ENEMY_MIDDLE_DAMAGE * level,
+                                ENEMY_MIDDLE_RELOAD_INTERVAL,
+                                ENEMY_MIDDLE_HP,
+                                ENEMY_MIDDLE_HEIGHT,
+                                false,
+                                ENEMY_MIDDLE_SCORE);
+                    } else {
+                        enemyShip.set(
+                                enemyBigRegion,
+                                enemyBigV,
+                                bulletRegion,
+                                ENEMY_BIG_BULLET_HEIGHT,
+                                ENEMY_BIG_BULLET_VY,
+                                ENEMY_BIG_DAMAGE * level,
+                                ENEMY_BIG_RELOAD_INTERVAL,
+                                ENEMY_BIG_HP,
+                                ENEMY_BIG_HEIGHT,
+                                true,
+                                ENEMY_BIG_SCORE);
+                    }
+                    break;
             }
-            enemyShip.pos.x= Rnd.nextFloat(worldBounds.getLeft()+enemyShip.getHalfWidth(),worldBounds.getRight()-enemyShip.getHalfWidth());
+
+            enemyShip.pos.x = Rnd.nextFloat(worldBounds.getLeft() + enemyShip.getHalfWidth(), worldBounds.getRight() - enemyShip.getHalfWidth());
             enemyShip.setBottom(worldBounds.getTop());
 
         }
@@ -119,6 +194,10 @@ public class EnemyGenerator {
 
     public int getLevel() {
         return level;
+    }
+
+    public static int getEnemyBigHp() {
+        return ENEMY_BIG_HP;
     }
 
     public void setLevel(int level) {

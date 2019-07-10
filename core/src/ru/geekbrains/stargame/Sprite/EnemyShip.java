@@ -43,14 +43,17 @@ public class EnemyShip extends Ship {
                 reloadTimer += delta;
                 if (reloadTimer >= reloadInterval) {
                     reloadTimer = 0f;
-                    shoot();
+                    System.out.println(this.doubleBullet);
+                    if (this.doubleBullet) {
+                        shoot(this.doubleBullet);
+                    }else{shoot(this.doubleBullet);}
                 }
                 break;
         }
     }
 
     public void set(
-            TextureRegion[] regions,//две текстуры для двух разных состояний
+            TextureRegion[] regions,
             Vector2 v0,
             TextureRegion bulletRegion,
             float bulletHigh,
@@ -58,7 +61,9 @@ public class EnemyShip extends Ship {
             int damage,
             float reloadInterval,
             int hp,
-            float height
+            float height,
+            boolean doubleBullet,
+            int score
     ) {
         this.regions = regions;//вид корабля
         this.v0.set(v0);//начальная скорость корабля
@@ -69,12 +74,15 @@ public class EnemyShip extends Ship {
         this.reloadInterval = reloadInterval;//интервал перезагрузки
         this.hp = hp;//кол-во жизней
         setHeightProportion(height);
+        this.doubleBullet=doubleBullet;
+        this.score=score;
         v.set(descentV);
         reloadTimer=reloadInterval;
         state=state.DESCENT;
 
 
     }
+
 
     public boolean isBulletCollision(Rect bullet){
         return !(bullet.getRight()<getLeft()
