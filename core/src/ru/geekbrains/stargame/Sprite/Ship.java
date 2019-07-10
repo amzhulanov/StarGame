@@ -17,12 +17,14 @@ public abstract class Ship extends Sprite {
     protected float bulletHigh;
     protected int damage;
     protected int hp;
+    protected int score;
 
     protected BulletPool bulletPool;
     protected ExplosionPool explosionPool;
     protected Rect worldBounds;
 
     protected TextureRegion bulletRegion;
+    protected boolean doubleBullet;
     protected Sound shootSound;
 
     protected float reloadInterval;
@@ -54,12 +56,12 @@ public abstract class Ship extends Sprite {
 
         }
     }
+
     @Override
     public void destroy() {
         super.destroy();
         boom();
     }
-
 
 
     public void damage(int damage) {
@@ -76,14 +78,34 @@ public abstract class Ship extends Sprite {
         return hp;
     }
 
-    protected void shoot() {
-        Bullet bullet = bulletPool.obtain();
-        bullet.set(this, bulletRegion, pos, bulletV, bulletHigh, worldBounds, damage);
-        shootSound.play();
+    protected void shoot(Boolean doubleBullet) {
+        Vector2 delta = new Vector2(getHalfWidth()-0.02f, 0);
+        Bullet bullet;
+        if (doubleBullet) {
+            System.out.println(pos.x + " - " + pos.y);
+            System.out.println(pos.cpy().sub(delta).x);
+            bullet = bulletPool.obtain();
+            bullet.set(this, bulletRegion, pos.cpy().sub(delta), bulletV, bulletHigh, worldBounds, damage);
+            bullet = bulletPool.obtain();
+            bullet.set(this, bulletRegion, pos.cpy().add(delta), bulletV, bulletHigh, worldBounds, damage);
+            shootSound.play();
+        } else {
+            bullet = bulletPool.obtain();
+            bullet.set(this, bulletRegion, pos, bulletV, bulletHigh, worldBounds, damage);
+            shootSound.play();
+        }
     }
 
     protected void boom() {
         Explosion explosion = explosionPool.obtain();
         explosion.set(getHeight(), pos);
+    }
+
+    public Vector2 getV() {
+        return v;
+    }
+
+    public int getScore() {
+        return score;
     }
 }
