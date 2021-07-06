@@ -1,8 +1,10 @@
-package ru.geekbrains.stargame.Base;
+package ru.geekbrains.stargame.base;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix3;
@@ -12,34 +14,32 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.stargame.math.MatrixUtils;
 import ru.geekbrains.stargame.math.Rect;
 
-
 public abstract class BaseScreen implements Screen, InputProcessor {
-    protected SpriteBatch batch;
 
+    protected SpriteBatch batch;
     private Rect screenBounds;
-    private Rect worldBounds;
+    protected Rect worldBounds;
     private Rect glBounds;
+
+    private Matrix4 worldToGl;
+    private Matrix3 screenToWorld;
 
     private Vector2 touch;
 
 
-
-    private Matrix4 worldToGl; //используется в batch по умолчанию
-    private Matrix3 screenToWorld;//используем для преобразования из скриновской в мировую систему координат
+    public Music music;
 
     @Override
     public void show() {
+        System.out.println("show");
         this.batch = new SpriteBatch();
         Gdx.input.setInputProcessor(this);
         screenBounds = new Rect();
         worldBounds = new Rect();
         glBounds = new Rect(0, 0, 1f, 1f);
-
-
-        touch = new Vector2(); //вектор направления
-
         worldToGl = new Matrix4();
         screenToWorld = new Matrix3();
+        touch = new Vector2();
     }
 
     @Override
@@ -57,16 +57,15 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
         float aspect = width / (float) height;
         worldBounds.setHeight(1f);
-        worldBounds.setWidth(1f * aspect);
+        worldBounds.setWidth(1f*aspect);
         MatrixUtils.calcTransitionMatrix(worldToGl, worldBounds, glBounds);
         batch.setProjectionMatrix(worldToGl);
         MatrixUtils.calcTransitionMatrix(screenToWorld, screenBounds, worldBounds);
         resize(worldBounds);
-
     }
 
     public void resize(Rect worldBounds) {
-        System.out.println("worldBounds width = " + worldBounds.getWidth() + " worldBounds = " + worldBounds.getHeight());
+        System.out.println("worldBounds width = " + worldBounds.getWidth() + " height = " + worldBounds.getHeight());
     }
 
     @Override
@@ -89,7 +88,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     public void dispose() {
         System.out.println("dispose");
         batch.dispose();
-
     }
 
     @Override
@@ -112,26 +110,27 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        touch.set(screenX, Gdx.graphics.getHeight() - screenY).mul(screenToWorld);//вектор touch принимает значение нашей координатной сетки, к которой мы пришли
-       touchDown(touch, pointer);//метод touchDown рассчитывает вектор скорости для движения объекта в указанную точку
+        System.out.println("touchDown screenX = " + screenX + " screenY = " + screenY);
+        touch.set(screenX, Gdx.graphics.getHeight() - screenY).mul(screenToWorld);
+        touchDown(touch, pointer);
         return false;
     }
 
     public boolean touchDown(Vector2 touch, int pointer) {
-        //speed.set(touch.cpy().sub(shuttle.pos)).setLength(V_LEN);//Создаю вектор скорости speed.
+        System.out.println("touchDown touchX = " + touch.x + " touchY = " + touch.y);
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        //  System.out.println("touchUp screenX = " + screenX + " screenY = " + screenY);
+        System.out.println("touchUp screenX = " + screenX + " screenY = " + screenY);
         touch.set(screenX, Gdx.graphics.getHeight() - screenY).mul(screenToWorld);
         touchUp(touch, pointer);
         return false;
     }
 
     public boolean touchUp(Vector2 touch, int pointer) {
-        // System.out.println("touchUp touchX = " + touch.x + " touchY = " + touch.y);
+        System.out.println("touchUp touchX = " + touch.x + " touchY = " + touch.y);
         return false;
     }
 
@@ -145,7 +144,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     public boolean touchDragged(Vector2 touch, int pointer) {
         System.out.println("touchDragged touchX = " + touch.x + " touchY = " + touch.y);
-        //speed.set(touch.cpy().sub(shuttle.pos)).setLength(V_LEN);//Создаю вектор скорости speed.
         return false;
     }
 
@@ -159,5 +157,10 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         System.out.println("scrolled amount = " + amount);
         return false;
     }
-
+    protected void musicOn(String path, Float volume, Boolean loop){
+        music = Gdx.audio.newMusic(Gdx.files.internal(path));
+        music.setVolume(volume);
+        music.setLooping(loop);
+        music.play();
+    }
 }
